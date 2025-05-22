@@ -1,0 +1,26 @@
+[
+  {
+    "name": "REST Call Activity",
+    "id": "io.camunda.connectors.Http.v1",
+    "appliesTo": ["bpmn:ServiceTask"],
+    "properties": [
+      {
+        "label": "URL",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "url"
+        }
+      },
+      {
+        "label": "Method",
+        "type": "Dropdown",
+        "choices": ["GET", "POST", "PUT", "DELETE"],
+        "binding": {
+          "type": "zeebe:input",
+          "name": "method"
+        }
+      }
+    ]
+  }
+]

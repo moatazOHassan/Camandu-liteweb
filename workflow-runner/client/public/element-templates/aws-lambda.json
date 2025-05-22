@@ -1,0 +1,25 @@
+[
+  {
+    "name": "AWS Lambda Connector",
+    "id": "io.camunda.connectors.AwsLambda.v1",
+    "appliesTo": ["bpmn:ServiceTask"],
+    "properties": [
+      {
+        "label": "Function Name",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "functionName"
+        }
+      },
+      {
+        "label": "Payload",
+        "type": "Text",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "payload"
+        }
+      }
+    ]
+  }
+]

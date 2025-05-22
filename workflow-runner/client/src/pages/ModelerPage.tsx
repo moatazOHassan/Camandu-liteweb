@@ -3,7 +3,7 @@ import axios from 'axios'; // Ensure axios is installed
 import BPMNEditor from '../components/BPMNEditor';
 import type BpmnJS from 'bpmn-js/lib/Modeler';
 
-const API_BASE_URL = '/api/modeler'; // Or your server's base URL
+const API_BASE_URL = 'http://localhost:3001/api/modeler'; // Server base URL
 
 interface DiagramMetadata {
   id: string;
@@ -12,46 +12,47 @@ interface DiagramMetadata {
   createdAt?: string;
 }
 
-const initialBpmnXml = `<?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-                  xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
-                  xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
-                  xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
-                  targetNamespace="http://bpmn.io/schema/bpmn"
-                  id="Definitions_initial">
-  <bpmn:process id="Process_initial" isExecutable="false">
-    <bpmn:startEvent id="StartEvent_initial"/>
-  </bpmn:process>
-  <bpmndi:BPMNDiagram id="BPMNDiagram_initial">
-    <bpmndi:BPMNPlane id="BPMNPlane_initial" bpmnElement="Process_initial">
-      <bpmndi:BPMNShape id="_BPMNShape_StartEvent_initial" bpmnElement="StartEvent_initial">
-        <dc:Bounds height="36.0" width="36.0" x="173.0" y="102.0"/>
-      </bpmndi:BPMNShape>
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
-</bpmn:definitions>`;
-
 const ModelerPage: React.FC = () => {
-  const [bpmnXml, setBpmnXml] = useState<string>(initialBpmnXml);
+  const [bpmnXml, setBpmnXml] = useState<string>('');
+  
+  // Load sample XML when component mounts
+  useEffect(() => {
+    fetch('/sample.xml')
+      .then(response => response.text())
+      .then(xml => {
+        setBpmnXml(xml);
+      })
+      .catch(err => {
+        console.error('Error loading sample XML:', err);
+        setError('Failed to load sample XML file.');
+      });
+  }, []);
   const modelerRef = useRef<BpmnJS | null>(null);
+  // Initialize with empty array and add loading state
   const [savedDiagrams, setSavedDiagrams] = useState<DiagramMetadata[]>([]);
+  const [isInitialized, setIsInitialized] = useState<boolean>(false);
   const [currentDiagramId, setCurrentDiagramId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchSavedDiagrams = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await axios.get<DiagramMetadata[]>(`${API_BASE_URL}/diagrams`);
-      setSavedDiagrams(response.data);
-    } catch (err) {
-      console.error('Error fetching saved diagrams:', err);
-      setError('Failed to fetch saved diagrams.');
-    } finally {
-      setIsLoading(false);
+    if (!isInitialized) {
+      setIsLoading(true);
+      setError(null);
+      try {
+        const response = await axios.get<DiagramMetadata[]>(`${API_BASE_URL}/diagrams`);
+        setSavedDiagrams(Array.isArray(response.data) ? response.data : []);
+      } catch (err) {
+        console.error('Error fetching saved diagrams:', err);
+        setError('Failed to fetch saved diagrams.');
+        // Ensure savedDiagrams is always an array even on error
+        setSavedDiagrams([]);
+      } finally {
+        setIsLoading(false);
+        setIsInitialized(true);
+      }
     }
-  }, []);
+  }, [isInitialized]);
 
   useEffect(() => {
     fetchSavedDiagrams();
@@ -81,9 +82,9 @@ const ModelerPage: React.FC = () => {
     reader.readAsText(file);
   };
 
-  const handleEditorReady = (modeler: BpmnJS) => {
+  const handleEditorReady = useCallback((modeler: BpmnJS) => {
     modelerRef.current = modeler;
-  };
+  }, []);
 
   const handleDownloadLocal = async () => {
     if (!modelerRef.current) {
@@ -159,15 +160,22 @@ const ModelerPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
-  const handleNewDiagram = () => {
-    setBpmnXml(initialBpmnXml);
-    setCurrentDiagramId(null);
-    setError(null);
-    if(modelerRef.current) {
-        // Optionally clear selection or reset view in modeler if methods exist
-    }
-    alert('New diagram created. You can start editing.');
+    const handleNewDiagram = () => {
+    setIsLoading(true);
+    fetch('/sample.xml')
+      .then(response => response.text())
+      .then(xml => {
+        setBpmnXml(xml);
+        setCurrentDiagramId(null);
+        setError(null);
+        setIsLoading(false);
+        alert('New diagram created from sample. You can start editing.');
+      })
+      .catch(err => {
+        console.error('Error loading sample XML:', err);
+        setError('Failed to load sample XML file.');
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -202,7 +210,7 @@ const ModelerPage: React.FC = () => {
           </ul>
         </div>
 
-        <div style={{ flexGrow: 1, position: 'relative' /* For editor container to fill */ }}>
+        <div style={{ flexGrow: 1, position: 'relative' /* For editor container to fill */ }}>ننن
           <BPMNEditor xml={bpmnXml} onEditorReady={handleEditorReady} />
         </div>
       </div>

@@ -20,7 +20,7 @@ interface DiagramMetadata {
   id: string;
   name: string;
   filename: string;
-  createdAt: string; // Optional: for sorting or information
+  createdAt: string;
 }
 
 // In-memory array to store diagram metadata.
@@ -60,7 +60,7 @@ router.post('/diagrams', (req: Request, res: Response) => {
 });
 
 // GET /diagrams - List all BPMN diagrams
-router.get('/diagrams', (req: Request, res: Response) => {
+router.get('/diagrams', (_req: Request, res: Response) => {
   // For now, just returns the in-memory list.
   // If implementing a file-based manifest or reading directly from dir, logic would go here.
   res.status(200).json(diagramsMetadata);

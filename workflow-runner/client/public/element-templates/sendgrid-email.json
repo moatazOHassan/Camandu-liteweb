@@ -1,0 +1,33 @@
+[
+  {
+    "name": "SendGrid Email Connector",
+    "id": "io.camunda.connectors.SendGrid.v1",
+    "appliesTo": ["bpmn:ServiceTask"],
+    "properties": [
+      {
+        "label": "Recipient Email",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "recipientEmail"
+        }
+      },
+      {
+        "label": "Subject",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "subject"
+        }
+      },
+      {
+        "label": "Body",
+        "type": "Text",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "body"
+        }
+      }
+    ]
+  }
+]

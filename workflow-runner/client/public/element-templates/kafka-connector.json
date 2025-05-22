@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Kafka Connector",
+    "id": "io.camunda.connectors.Kafka.v1",
+    "appliesTo": ["bpmn:ServiceTask"],
+    "elementType": { "value": "bpmn:ServiceTask" },
+    "icon": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/apachekafka.svg",
+    "properties": [
+      {
+        "label": "Kafka Topic",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "kafkaTopic"
+        }
+      },
+      {
+        "label": "Bootstrap Servers",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "bootstrapServers"
+        }
+      }
+    ]
+  }
+]

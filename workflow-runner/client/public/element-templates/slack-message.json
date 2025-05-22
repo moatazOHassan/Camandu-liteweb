@@ -1,0 +1,25 @@
+[
+  {
+    "name": "Slack Message Connector",
+    "id": "io.camunda.connectors.Slack.v1",
+    "appliesTo": ["bpmn:ServiceTask"],
+    "properties": [
+      {
+        "label": "Channel",
+        "type": "String",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "channel"
+        }
+      },
+      {
+        "label": "Message",
+        "type": "Text",
+        "binding": {
+          "type": "zeebe:input",
+          "name": "message"
+        }
+      }
+    ]
+  }
+]
